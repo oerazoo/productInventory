@@ -1,0 +1,36 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = "product-inventory-api"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/oerazoo/productInventory.git'
+            }
+        }
+
+        stage('Maven Build') {
+            steps {
+                // Usamos el contenedor de maven para compilar
+                sh 'mvn clean package -DskipTests'
+            }
+        }
+
+        stage('Docker Build & Run') {
+            steps {
+                sh "docker stop api-container || true"
+                sh "docker rm api-container || true"
+                sh "docker build -t ${DOCKER_IMAGE} ."
+                sh """
+                docker run -d --name api-container -p 8080:8080 \
+                  -e AWS_ACCESS_KEY=${AWS_KEY} \
+                  -e AWS_SECRET_KEY=${AWS_SECRET} \
+                  ${DOCKER_IMAGE}
+                """
+            }
+        }
+    }
+}
