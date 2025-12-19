@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'maven_3'
+    }
+
     environment {
         DOCKER_IMAGE = "inventory-api"
     }
