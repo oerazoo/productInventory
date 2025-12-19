@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "product-inventory-api"
+        DOCKER_IMAGE = "inventory-api"
     }
 
     stages {
